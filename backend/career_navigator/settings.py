@@ -138,9 +138,9 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 # Allow dynamic frontend origin injected by Render
-FRONTEND_URL = os.environ.get('FRONTEND_URL')
-if FRONTEND_URL:
-    CORS_ALLOWED_ORIGINS.append(FRONTEND_URL.rstrip('/'))
+FRONTEND_HOST = os.environ.get('FRONTEND_HOST')
+if FRONTEND_HOST:
+    CORS_ALLOWED_ORIGINS.append(f"https://{FRONTEND_HOST}")
 
 CORS_ALLOW_CREDENTIALS = True
 

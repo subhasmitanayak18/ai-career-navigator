@@ -24,11 +24,11 @@ services:
         value: "False"
       - key: PYTHON_VERSION
         value: "3.10.13"
-      - key: FRONTEND_URL
+      - key: FRONTEND_HOST
         fromService:
           type: web
           name: ai-career-frontend
-          property: url
+          property: host
 
   - type: web
     name: ai-career-frontend
@@ -37,8 +37,8 @@ services:
     staticPublishPath: "./frontend/build"
     pullRequestPreviewsEnabled: false
     envVars:
-      - key: REACT_APP_API_URL
+      - key: REACT_APP_API_HOST
         fromService:
           type: web
           name: ai-career-backend
-          property: url
+          property: host
