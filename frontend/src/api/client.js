@@ -4,7 +4,10 @@
  * Bearer token is automatically attached from localStorage.
  */
 
-const BASE_URL = 'http://localhost:8000/api';
+// Dynamic backend URL for production vs local
+// Render environment variables will inject just the domain hostname.
+const _RAW_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+const BASE_URL = `${_RAW_URL.replace(/\/+$/, '')}/api`;
 
 /** Read the JWT token stored after login */
 const getToken = () => localStorage.getItem('token');

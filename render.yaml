@@ -1,0 +1,44 @@
+databases:
+  - name: ai-career-db
+    databaseName: aicareer
+    user: aicareeruser
+    plan: free
+
+services:
+  - type: web
+    name: ai-career-backend
+    env: python
+    buildCommand: "cd backend && ./build.sh"
+    startCommand: "cd backend && gunicorn career_navigator.wsgi:application"
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ai-career-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: PYTHON_VERSION
+        value: "3.10.13"
+      - key: FRONTEND_URL
+        fromService:
+          type: web
+          name: ai-career-frontend
+          property: url
+
+  - type: web
+    name: ai-career-frontend
+    env: static
+    buildCommand: "cd frontend && npm install && npm run build"
+    staticPublishPath: "./frontend/build"
+    pullRequestPreviewsEnabled: false
+    envVars:
+      - key: REACT_APP_API_URL
+        fromService:
+          type: web
+          name: ai-career-backend
+          property: url
