@@ -1,0 +1,10 @@
+django
+djangorestframework
+django-cors-headers
+PyJWT
+PyPDF2
+transformers
+torch
+scikit-learn
+python-dotenv
+sentence-transformers
