@@ -107,17 +107,11 @@ class BERTAnalyzer:
 
     def __init__(self):
         """
-        Load the tokenizer and model from HuggingFace.
-        The model weights are cached locally after the first download.
+        Force standard fallback similarity (TF-IDF) since sentence-transformers
+        causes out-of-memory errors on Render free tier.
         """
-        try:
-            from sentence_transformers import SentenceTransformer
-            self.model = SentenceTransformer(self.MODEL_NAME)
-            self._available = True
-        except ImportError:
-            # Fallback: sentence-transformers not installed; use TF-IDF similarity
-            self.model = None
-            self._available = False
+        self.model = None
+        self._available = False
 
     def get_embedding(self, text: str) -> np.ndarray:
         """

@@ -1,4 +1,4 @@
-# 🧭 AI Career Navigator
+d# 🧭 AI Career Navigator
 
 > An AI-powered full-stack web app that analyzes your resume against a job description, identifies skill gaps, and generates a personalized week-by-week learning roadmap using BERT embeddings.
 
@@ -21,7 +21,7 @@
 ```
 ai-career-navigator/
 ├── backend/
-│   ├── .env                     # Secrets (never commit!)
+│   ├── .env                     
 │   ├── requirements.txt
 │   ├── manage.py
 │   ├── career_navigator/
