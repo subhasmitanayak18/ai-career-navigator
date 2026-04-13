@@ -39,7 +39,7 @@ const LoginPage = () => {
         ? await api.signup(username, email, password)
         : await api.login(username, password);
 
-      loginUser(data.access_token, data.username);
+      loginUser(data.token, data.user.username);
       navigate('/dashboard', { replace: true });
     } catch (err) {
       setError(err.message || 'Something went wrong. Please try again.');
