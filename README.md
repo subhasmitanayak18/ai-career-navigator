@@ -118,15 +118,26 @@ Open your browser and go to: **http://localhost:3000**
 - Enter a username, email, and password (6+ chars)
 - You'll be redirected to your dashboard
 
-### 3. Run a Full Analysis
+### 3. Modern Hub Layout
+Navigate effortlessly through the app using the new, responsive left sidebar featuring a **glassmorphism** design. 
+- **Send Requests**: View a mock grid of peers and simulate sending/accepting connection requests to unlock chat and video features.
+- **Available Courses**: Browse a JSON-driven catalog of top-tier free AI and Programming courses (e.g., CS50, Fast.ai, Hugging Face).
+- **View Progress**: Visualize learning success through dynamic Recharts-powered graphs and custom SVG circular completion bars.
+
+### 4. Run a Full Analysis
 1. **Dashboard** → Click **"Start New Analysis"**
 2. **Upload** (Step 1): Paste your resume text or upload a PDF, then paste a job description → Click Analyze
 3. **Skill Gap** (Step 2): Rate your proficiency for each missing skill (Beginner / Intermediate / Advanced)
 4. **Timeline** (Step 3): Pick your learning timeline (1, 3, or 6 months)
 5. **Roadmap** (Step 4): View your personalized week-by-week roadmap with tasks and resources
 
-### 4. Admin Panel
+### 5. Admin Panel
 Visit **http://localhost:8000/admin** and login with your superuser credentials to view all Users and Analyses.
+
+### 6. Global Settings
+Leverage the top-right Header dropdowns to:
+- Instantly toggle **Light / Dark Mode** via native DOM injection (preferences persist in localStorage).
+- Adjust localization language states.
 
 ---
 
