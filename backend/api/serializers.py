@@ -187,3 +187,8 @@ class RoadmapRequestSerializer(serializers.Serializer):
     analysis_id = serializers.IntegerField(
         help_text='Primary key of the Analysis for which to generate a roadmap.'
     )
+    timeline = serializers.CharField(
+        max_length=20,
+        required=False,
+        help_text='Optional timeline override if one has not already been saved.',
+    )

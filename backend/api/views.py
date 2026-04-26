@@ -66,7 +66,7 @@ def login_view(request):
             })
 
         return Response(
-            {"error": "Invalid credentials"},
+            {"detail": "Invalid credentials"},
             status=status.HTTP_401_UNAUTHORIZED
         )
 
@@ -75,8 +75,21 @@ def login_view(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def dashboard_view(request):
-    analyses = Analysis.objects.filter(user=request.user).order_by('-created_at')
+    analyses = Analysis.objects.filter(user=request.user).order_by('-created_at')[:10]
     serializer = PastAnalysisSerializer(analyses, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_analysis_view(request, analysis_id):
+    try:
+        analysis = Analysis.objects.get(id=analysis_id, user=request.user)
+    except Analysis.DoesNotExist:
+        return Response(
+            {'detail': 'Analysis not found'},
+            status=status.HTTP_404_NOT_FOUND
+        )
+    serializer = AnalysisSerializer(analysis)
     return Response(serializer.data)
 
 @api_view(['POST'])
@@ -147,10 +160,25 @@ def skill_level_view(request):
     serializer = SkillLevelSerializer(data=request.data)
     
     if serializer.is_valid():
+        analysis_id = serializer.validated_data.get('analysis_id')
+        skill_levels = serializer.validated_data.get('skill_levels', {})
+
+        try:
+            analysis = Analysis.objects.get(id=analysis_id, user=request.user)
+        except Analysis.DoesNotExist:
+            return Response(
+                {'detail': 'Analysis not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        analysis.skill_levels = skill_levels
+        analysis.save(update_fields=['skill_levels', 'updated_at'])
+
         return Response(
             {
                 'message': 'Skill levels assessed successfully',
-                'skills': serializer.validated_data.get('skills', {})
+                'analysis_id': analysis.id,
+                'skill_levels': analysis.skill_levels,
             },
             status=status.HTTP_200_OK
         )
@@ -164,6 +192,7 @@ def timeline_view(request):
     serializer = TimelineSerializer(data=request.data)
     
     if serializer.is_valid():
+        analysis_id = serializer.validated_data.get('analysis_id')
         timeline = serializer.validated_data.get('timeline')
         
         if timeline not in VALID_TIMELINES:
@@ -171,11 +200,23 @@ def timeline_view(request):
                 {'detail': f'Invalid timeline. Choose from: {", ".join(VALID_TIMELINES)}'},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+        try:
+            analysis = Analysis.objects.get(id=analysis_id, user=request.user)
+        except Analysis.DoesNotExist:
+            return Response(
+                {'detail': 'Analysis not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        analysis.timeline = timeline
+        analysis.save(update_fields=['timeline', 'updated_at'])
         
         return Response(
             {
                 'message': f'Timeline set to {timeline}',
-                'timeline': timeline
+                'analysis_id': analysis.id,
+                'timeline': analysis.timeline,
             },
             status=status.HTTP_200_OK
         )
@@ -190,7 +231,6 @@ def roadmap_view(request):
     
     if serializer.is_valid():
         analysis_id = serializer.validated_data.get('analysis_id')
-        timeline = serializer.validated_data.get('timeline')
         
         try:
             analysis = Analysis.objects.get(id=analysis_id, user=request.user)
@@ -199,17 +239,30 @@ def roadmap_view(request):
                 {'detail': 'Analysis not found'},
                 status=status.HTTP_404_NOT_FOUND
             )
+
+        timeline = analysis.timeline or serializer.validated_data.get('timeline')
+        if not timeline:
+            return Response(
+                {'detail': 'Timeline is required before generating a roadmap.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         
         roadmap = generate_roadmap(
             missing_skills=analysis.missing_skills,
-            timeline=timeline
+            skill_levels=analysis.skill_levels or {},
+            timeline=timeline,
+            job_title=analysis.job_title,
+            similarity_score=analysis.similarity_score,
         )
+
+        analysis.timeline = timeline
+        analysis.roadmap = roadmap
+        analysis.save(update_fields=['timeline', 'roadmap', 'updated_at'])
         
         return Response(
             {
-                'roadmap': roadmap,
-                'timeline': timeline,
-                'analysis_id': analysis_id
+                **roadmap,
+                'analysis_id': analysis.id,
             },
             status=status.HTTP_200_OK
         )

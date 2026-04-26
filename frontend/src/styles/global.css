@@ -4,7 +4,7 @@
 
 /* ── 1. Custom Properties (Design Tokens) ─────────────────── */
 :root {
-  /* Primary (Indigo) */
+  /* Primary (Indigo) - Persistent */
   --primary-50:  #eef2ff;
   --primary-100: #e0e7ff;
   --primary-300: #a5b4fc;
@@ -13,59 +13,86 @@
   --primary-700: #4338ca;
   --primary-900: #1e1b4b;
 
-  /* Success (Emerald) */
-  --success-50:  #ecfdf5;
-  --success-400: #34d399;
-  --success-500: #10b981;
-  --success-600: #059669;
-
-  /* Warning (Amber) */
-  --warning-50:  #fffbeb;
-  --warning-400: #fbbf24;
-  --warning-500: #f59e0b;
-  --warning-600: #d97706;
-
-  /* Danger (Red) */
-  --danger-50:  #fef2f2;
-  --danger-400: #f87171;
-  --danger-500: #ef4444;
-  --danger-600: #dc2626;
-
-  /* Gray Scale */
-  --gray-50:  #f9fafb;
-  --gray-100: #f3f4f6;
-  --gray-200: #e5e7eb;
-  --gray-300: #d1d5db;
-  --gray-400: #9ca3af;
-  --gray-500: #6b7280;
-  --gray-600: #4b5563;
-  --gray-700: #374151;
-  --gray-800: #1f2937;
-  --gray-900: #111827;
-
-  /* Background */
-  --bg-primary:   #0f0f1a;
-  --bg-secondary: #13131f;
-  --bg-card:      #1a1a2e;
-  --bg-card-2:    #16213e;
-
-  /* Borders */
-  --border-color: rgba(255, 255, 255, 0.08);
-  --border-focus: var(--primary-500);
-
   /* Typography */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
-  /* Spacing */
+  /* Spacing & Utilities */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 24px;
+}
 
-  /* Shadows */
+[data-theme='dark'] {
+  --bg-primary:   #0f0f1a;
+  --bg-secondary: #13131f;
+  --bg-card:      #1a1a2e;
+  --bg-card-2:    #16213e;
+  
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  
+  --border-color: rgba(255, 255, 255, 0.08);
+  --glass-bg: rgba(26, 26, 46, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.1);
   --shadow-card: 0 4px 24px rgba(0,0,0,0.4);
-  --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.15);
+}
+
+[data-theme='light'] {
+  --bg-primary:   #f8fafc;
+  --bg-secondary: #f1f5f9;
+  --bg-card:      #ffffff;
+  --bg-card-2:    #f8fafc;
+  
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  
+  --border-color: rgba(0, 0, 0, 0.08);
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 4px 24px rgba(0,0,0,0.06);
+}
+
+/* Glassmorphism Utilities */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-card);
+}
+
+/* App Layout Setup */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 32px;
+  overflow-y: auto;
+  margin-left: 260px; /* Offset for fixed sidebar */
+  transition: margin-left 0.3s ease;
+}
+
+@media (max-width: 1024px) {
+  .main-content {
+    margin-left: 80px; /* Offset for collapsed sidebar */
+  }
+}
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+    padding: 16px;
+  }
 }
 
 /* ── 2. Reset & Base ──────────────────────────────────────── */

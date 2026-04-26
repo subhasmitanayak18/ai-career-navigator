@@ -140,7 +140,17 @@ CORS_ALLOWED_ORIGINS = [
 # Allow dynamic frontend origin injected by Render
 FRONTEND_HOST = os.environ.get('FRONTEND_HOST')
 if FRONTEND_HOST:
-    CORS_ALLOWED_ORIGINS.append(f"https://{FRONTEND_HOST}")
+    # Handle comma-separated hosts and support bare domains
+    for host in FRONTEND_HOST.split(','):
+        host = host.strip()
+        if not host.startswith('http'):
+            CORS_ALLOWED_ORIGINS.extend([f"https://{host}", f"http://{host}"])
+        else:
+            CORS_ALLOWED_ORIGINS.append(host)
+else:
+    # If no FRONTEND_HOST is provided, allow all origins to prevent breaking
+    # the frontend in deployed environments that forgot the env var.
+    CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_CREDENTIALS = True
 

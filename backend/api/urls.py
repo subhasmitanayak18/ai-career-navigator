@@ -15,6 +15,7 @@ urlpatterns = [
     path('dashboard/', views.dashboard_view, name='dashboard'),
 
     # Analysis flow
+    path('analyses/<int:analysis_id>/', views.get_analysis_view, name='get-analysis'),
     path('analyze/',     views.analyze_view,     name='analyze'),
     path('skill-level/', views.skill_level_view, name='skill-level'),
     path('timeline/',    views.timeline_view,     name='timeline'),

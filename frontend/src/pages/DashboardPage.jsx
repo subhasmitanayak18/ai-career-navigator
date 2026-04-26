@@ -29,10 +29,6 @@ const DashboardPage = () => {
     fetchDashboard();
   }, []);
 
-  const handleLogout = () => {
-    logoutUser();
-    navigate('/login', { replace: true });
-  };
 
   const formatDate = (iso) =>
     new Date(iso).toLocaleDateString('en-US', {
@@ -47,22 +43,7 @@ const DashboardPage = () => {
   };
 
   return (
-    <div className="page-full">
-      {/* Navbar */}
-      <nav className="navbar">
-        <div className="navbar-brand">
-          <span className="navbar-logo">🧭</span>
-          <span className="navbar-name">AI Career Navigator</span>
-        </div>
-        <div className="navbar-user">
-          <span className="navbar-username">👤 {auth.username}</span>
-          <button id="btn-logout" className="btn btn-outline btn-sm" onClick={handleLogout}>
-            Logout
-          </button>
-        </div>
-      </nav>
-
-      <div className="dashboard-content">
+    <div className="section-container dashboard-content" style={{ padding: 0 }}>
         {/* Welcome hero */}
         <div className="dashboard-hero">
           <div className="dashboard-hero-text">
@@ -159,7 +140,6 @@ const DashboardPage = () => {
             </div>
           )}
         </div>
-      </div>
     </div>
   );
 };

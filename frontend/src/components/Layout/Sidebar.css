@@ -1,0 +1,217 @@
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border-color);
+  background: var(--bg-card); /* Fallback */
+  z-index: 1000;
+  transition: width 0.3s ease, transform 0.3s ease;
+}
+
+.sidebar.collapsed {
+  width: 80px;
+}
+
+.sidebar-header {
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-brand {
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: var(--primary-500);
+  margin: 0;
+}
+
+.sidebar-icon-brand {
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: var(--primary-500);
+  margin: 0;
+}
+
+.sidebar-user {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar.collapsed .sidebar-user {
+  padding: 16px 8px;
+}
+
+.user-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-500), var(--primary-700));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.sidebar.collapsed .user-avatar {
+  width: 40px;
+  height: 40px;
+  font-size: 1rem;
+}
+
+.user-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 24px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+
+.sidebar.collapsed .nav-item {
+  justify-content: center;
+  padding: 12px;
+}
+
+.nav-item:hover {
+  background: var(--glass-bg);
+  color: var(--primary-500);
+}
+
+.nav-item.active {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--primary-500);
+  font-weight: 600;
+}
+
+.nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+}
+
+.sidebar-footer {
+  padding: 16px 12px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.text-danger {
+  color: var(--danger-500);
+}
+
+.text-danger:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger-600);
+}
+
+/* Mobile Toggle Header */
+.mobile-header {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+  z-index: 999;
+  align-items: center;
+  padding: 0 16px;
+  gap: 16px;
+}
+
+.mobile-menu-btn {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.mobile-brand {
+  font-weight: 700;
+  color: var(--primary-500);
+  font-size: 1.1rem;
+}
+
+.sidebar-backdrop {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .sidebar { width: 80px; }
+  .sidebar .sidebar-brand { display: none; }
+  .sidebar .sidebar-icon-brand { display: block; }
+  .sidebar .sidebar-user { padding: 16px 8px; }
+  .sidebar .user-avatar { width: 40px; height: 40px; font-size: 1rem; }
+  .sidebar .user-name { display: none; }
+  .sidebar .nav-item { justify-content: center; padding: 12px; }
+  .sidebar .nav-label { display: none; }
+  .collapse-btn { display: none; }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    width: 260px;
+  }
+  
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+  
+  .sidebar.mobile-open .nav-item { justify-content: flex-start; padding: 12px 16px; }
+  .sidebar.mobile-open .nav-label { display: inline; }
+  .sidebar.mobile-open .user-name { display: inline; }
+  
+  .mobile-header {
+    display: flex;
+  }
+  
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 998;
+  }
+}

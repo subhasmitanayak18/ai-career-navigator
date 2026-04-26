@@ -1,20 +1,7 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 
 /**
  * AppContext — Global state for the AI Career Navigator.
- *
- * State shape:
- *   auth:  { token: string|null, username: string|null }
- *   flow:  { analysisId, matchingSkills, missingSkills, similarityScore,
- *             skillLevels, timeline, roadmap }
- *
- * Actions:
- *   loginUser(token, username)
- *   logoutUser()
- *   setAnalysisResult(data)
- *   setSkillLevels(levels)
- *   setTimeline(timeline)
- *   setRoadmap(roadmap)
  */
 
 const AppContext = createContext(null);
@@ -39,6 +26,37 @@ export const AppProvider = ({ children }) => {
 
   // ── Analysis flow state ───────────────────────────────────────────────────
   const [flow, setFlow] = useState(FLOW_INITIAL);
+  const [restoring, setRestoring] = useState(true);
+
+  useEffect(() => {
+    const initSession = async () => {
+      const savedId = localStorage.getItem('current_analysis_id');
+      const token = localStorage.getItem('token');
+      
+      if (token && savedId && !flow.analysisId) {
+        try {
+          const { api } = await import('../api/client');
+          const data = await api.getAnalysis(savedId);
+          setFlow({
+            analysisId: data.id,
+            matchingSkills: data.matching_skills || [],
+            missingSkills: data.missing_skills || [],
+            similarityScore: data.similarity_score || null,
+            jobTitle: data.job_title || null,
+            skillLevels: data.skill_levels || {},
+            timeline: data.timeline || null,
+            roadmap: data.roadmap || null,
+          });
+        } catch (err) {
+          console.error('Failed to restore session:', err);
+          localStorage.removeItem('current_analysis_id');
+        }
+      }
+      setRestoring(false);
+    };
+
+    initSession();
+  }, [flow.analysisId]); // Satisfy exhaustive-deps; condition inside prevents re-fetching
 
   // ── Auth actions ──────────────────────────────────────────────────────────
 
@@ -51,16 +69,13 @@ export const AppProvider = ({ children }) => {
   const logoutUser = useCallback(() => {
     localStorage.removeItem('token');
     localStorage.removeItem('username');
+    localStorage.removeItem('current_analysis_id');
     setAuth({ token: null, username: null });
     setFlow(FLOW_INITIAL);
   }, []);
 
   // ── Flow actions ──────────────────────────────────────────────────────────
 
-  /**
-   * Save data returned from /api/analyze/
-   * @param {{ analysis_id, matching_skills, missing_skills, similarity_score, job_title }} data
-   */
   const setAnalysisResult = useCallback((data) => {
     setFlow((prev) => ({
       ...prev,
@@ -69,33 +84,21 @@ export const AppProvider = ({ children }) => {
       missingSkills: data.missing_skills || [],
       similarityScore: data.similarity_score || null,
       jobTitle: data.job_title || null,
-      // Reset downstream state when a new analysis starts
       skillLevels: {},
       timeline: null,
       roadmap: null,
     }));
+    localStorage.setItem('current_analysis_id', data.analysis_id);
   }, []);
 
-  /**
-   * Save skill proficiency levels selected by the user.
-   * @param {Object} levels  e.g. { "Python": "Beginner" }
-   */
   const setSkillLevels = useCallback((levels) => {
     setFlow((prev) => ({ ...prev, skillLevels: levels }));
   }, []);
 
-  /**
-   * Save the chosen learning timeline.
-   * @param {string} timeline  "1 Month" | "3 Months" | "6 Months"
-   */
   const setTimeline = useCallback((timeline) => {
     setFlow((prev) => ({ ...prev, timeline }));
   }, []);
 
-  /**
-   * Save the generated roadmap returned from /api/roadmap/
-   * @param {Object} roadmap
-   */
   const setRoadmap = useCallback((roadmap) => {
     setFlow((prev) => ({ ...prev, roadmap }));
   }, []);
@@ -104,6 +107,7 @@ export const AppProvider = ({ children }) => {
   const value = {
     auth,
     flow,
+    restoring,
     loginUser,
     logoutUser,
     setAnalysisResult,
@@ -115,10 +119,6 @@ export const AppProvider = ({ children }) => {
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
 
-/**
- * Custom hook for consuming AppContext.
- * Throws if used outside of AppProvider.
- */
 export const useApp = () => {
   const ctx = useContext(AppContext);
   if (!ctx) {

@@ -25,7 +25,7 @@ const SkillGapPage = () => {
 
   const ratedCount = Object.keys(levels).length;
   const totalCount = missingSkills.length;
-  const allRated   = totalCount > 0 && ratedCount === totalCount;
+  const allRated   = ratedCount === totalCount;
   const scorePercent = similarityScore ? Math.round(parseFloat(similarityScore) * 100) : 0;
 
   const selectLevel = (skill, level) => {

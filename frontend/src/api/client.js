@@ -33,7 +33,10 @@ const request = async (endpoint, options = {}) => {
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    const message = data?.detail || `Request failed with status ${response.status}`;
+    const message =
+      data?.detail ||
+      data?.error ||
+      `Request failed with status ${response.status}`;
     throw new Error(message);
   }
 
@@ -43,7 +46,7 @@ const request = async (endpoint, options = {}) => {
 export const api = {
   /**
    * Register a new user account.
-   * @returns { access_token, token_type, username }
+   * @returns { token, user }
    */
   signup: (username, email, password) =>
     request('/auth/signup/', {
@@ -54,13 +57,22 @@ export const api = {
 
   /**
    * Authenticate with username + password.
-   * @returns { access_token, token_type, username }
+   * @returns { token, user }
    */
   login: (username, password) =>
     request('/auth/login/', {
       method: 'POST',
       headers: buildHeaders(),
       body: JSON.stringify({ username, password }),
+    }),
+
+  /**
+   * Load an analysis by ID to restore session state.
+   */
+  getAnalysis: (analysisId) =>
+    request(`/analyses/${analysisId}/`, {
+      method: 'GET',
+      headers: buildHeaders(),
     }),
 
   /**
